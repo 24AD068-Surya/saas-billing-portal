@@ -1,44 +1,44 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-
     try {
-
       const response = await axios.post(
         "http://localhost:5000/api/auth/login",
         {
           email,
-          password
+          password,
         }
       );
 
       console.log(response.data);
 
+      localStorage.setItem("token", response.data.token);
+
       alert("Login Successful");
 
+      // Redirect to Admin Dashboard
+      navigate("/admin");
     } catch (error) {
+      console.log("FULL ERROR:", error);
 
-  console.log("FULL ERROR:", error);
+      if (error.response) {
+        console.log("RESPONSE:", error.response.data);
+      }
 
-  if(error.response){
-    console.log("RESPONSE:", error.response.data);
-  }
-
-  alert("Login Failed");
-
-}
-
+      alert("Login Failed");
+    }
   };
 
   return (
     <div style={{ textAlign: "center", marginTop: "100px" }}>
-
       <h1>Role Based SaaS Billing Portal</h1>
 
       <input
@@ -48,7 +48,8 @@ function Login() {
         onChange={(e) => setEmail(e.target.value)}
       />
 
-      <br /><br />
+      <br />
+      <br />
 
       <input
         type="password"
@@ -57,12 +58,10 @@ function Login() {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <br /><br />
+      <br />
+      <br />
 
-      <button onClick={handleLogin}>
-        Login
-      </button>
-
+      <button onClick={handleLogin}>Login</button>
     </div>
   );
 }
